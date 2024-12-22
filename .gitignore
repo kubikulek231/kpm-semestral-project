@@ -2,6 +2,7 @@
 /*
 !.gitignore
 !kpm-project-11.cc
+!kpm-project-11-no-rem.cc
 !export/
 nested-subdir/
 subdir/
