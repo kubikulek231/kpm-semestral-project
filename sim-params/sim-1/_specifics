@@ -1,0 +1,8 @@
+uint32_t udpPacketSizeBrowsing = 25;
+uint32_t udpPacketSizeVoiceCall = 50;
+// Number of UDP packets in one second
+uint32_t lambdaBrowsing = 10000;
+uint32_t lambdaVoiceCall = 10000;
+// txpower
+double totalTxPower = 35;
+

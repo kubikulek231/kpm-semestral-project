@@ -4,6 +4,8 @@
 !kpm-project-11.cc
 !kpm-project-11-no-rem.cc
 !export/
+!project-data/
+!sim-params
 nested-subdir/
 subdir/
 scratch-simulator.cc
