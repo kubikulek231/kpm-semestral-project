@@ -55,64 +55,65 @@ main(int argc, char* argv[])
     *    \/_/    \/_/\/_/ \/_/ /_/ \/_/\/_/ \/_/  \/_/ \/_____/
     */
 
-    // Command line argument parsing
-    std::string direction = "DL";  // Default is "DL"
-    std::string mode = "COVERAGE_AREA";  // Default is "COVERAGE_AREA"
+	// Command line argument parsing
+	std::string direction = "DL";  // Default is "DL"
+	std::string mode = "COVERAGE_AREA";  // Default is "COVERAGE_AREA"
+	uint32_t udpPacketSizeBrowsing = 25;  // Default UDP packet size for browsing
+	uint32_t udpPacketSizeVoiceCall = 50;  // Default UDP packet size for voice calls
+	uint32_t lambdaBrowsing = 10000;  // Default lambda for browsing traffic
+	uint32_t lambdaVoiceCall = 10000;  // Default lambda for voice traffic
+	double totalTxPower = 35.0;  // Default total TX power
+	
+	CommandLine cmd(__FILE__);
+	cmd.AddValue("direction", "Direction of the REM: 'UL' or 'DL'", direction);
+	cmd.AddValue("mode", "Mode for the REM: 'BEAM_SHAPE', 'COVERAGE_AREA', or 'UE_COVERAGE'", mode);
+	cmd.AddValue("udpPacketSizeBrowsing", "UDP packet size for browsing traffic in bytes", udpPacketSizeBrowsing);
+	cmd.AddValue("udpPacketSizeVoiceCall", "UDP packet size for voice call traffic in bytes", udpPacketSizeVoiceCall);
+	cmd.AddValue("lambdaBrowsing", "Packet generation rate (packets/sec) for browsing traffic", lambdaBrowsing);
+	cmd.AddValue("lambdaVoiceCall", "Packet generation rate (packets/sec) for voice call traffic", lambdaVoiceCall);
+	cmd.AddValue("totalTxPower", "Total transmission power in dBm", totalTxPower);
 
-    CommandLine cmd(__FILE__);
-    cmd.AddValue("direction", "Direction of the REM: 'UL' or 'DL'", direction);
-    cmd.AddValue("mode", "Mode for the REM: 'BEAM_SHAPE', 'COVERAGE_AREA', or 'UE_COVERAGE'", mode);
+	// If --PrintHelp is provided, display the help message and exit
+	cmd.Parse(argc, argv);
 
-    // If --PrintHelp is provided, display the help message and exit
-    cmd.Parse(argc, argv);
+	// Scenario parameters (that we will use inside this script):
+	uint16_t numGnb = 3;
+	uint16_t numUePerGnb = 2;
+	uint32_t numTotalUe = numGnb * numUePerGnb;
+	uint32_t totalUesCall = 2; // Total voice UEs
+	uint32_t totalUesBrowse = 3; // Total browsing UEs
 
-    // Scenario parameters (that we will use inside this script):
-    uint16_t numGnb = 3;
-    uint16_t numUePerGnb = 2;
-    uint32_t numTotalUe = numGnb * numUePerGnb;
-    uint32_t totalUesCall = 2; // Total voice UEs
-    uint32_t totalUesBrowse = 3; // Total browsing UEs
+	int logging = 1;
 
-    int logging = 1;
+	// Simulation parameters.
+	Time simTime = MilliSeconds(100);
+	Time udpAppStartTime = MilliSeconds(10);
 
-    // Traffic parameters (that we will use inside this script):
-    // Packet size in bytes
-    uint32_t udpPacketSizeBrowsing = 25;
-    uint32_t udpPacketSizeVoiceCall = 50;
-    // Number of UDP packets in one second
-    uint32_t lambdaBrowsing = 10000;
-    uint32_t lambdaVoiceCall = 10000;
+	// NR parameters (Reference: 3GPP TR 38.901 V17.0.0 (Release 17)
+	// Table 7.8-1 for the power and BW).
 
-    // Simulation parameters.
-    Time simTime = MilliSeconds(100);
-    Time udpAppStartTime = MilliSeconds(10);
+	// Two separate BWPs
+	// Voice Call
+	uint16_t numerologyBwp1 = 4;
+	double centralFrequencyBand1 = 28e9;
+	double bandwidthBand1 = 50e6;
+	// Web browsing
+	uint16_t numerologyBwp2 = 2; 
+	double centralFrequencyBand2 = 28.2e9;
+	double bandwidthBand2 = 50e6;
 
-    // NR parameters (Reference: 3GPP TR 38.901 V17.0.0 (Release 17)
-    // Table 7.8-1 for the power and BW).
+	// Where we will store the output files.
+	std::string simTag = "default";
+	std::string outputDir = "./";
 
-    // Two separate BWPs
-    // Voice Call
-    uint16_t numerologyBwp1 = 4;
-    double centralFrequencyBand1 = 28e9;
-    double bandwidthBand1 = 50e6;
-    double totalTxPower = 35;
-    // Web browsing
-    uint16_t numerologyBwp2 = 2; 
-    double centralFrequencyBand2 = 28.2e9;
-    double bandwidthBand2 = 50e6;
-
-    // Where we will store the output files.
-    std::string simTag = "default";
-    std::string outputDir = "./";
-
-    // Rem parameters
-    double xMin = -40.0;
-    double xMax = 80.0;
-    uint16_t xRes = 50;
-    double yMin = -70.0;
-    double yMax = 50.0;
-    uint16_t yRes = 50;
-    double z = 1.5;
+	// Rem parameters
+	double xMin = -40.0;
+	double xMax = 80.0;
+	uint16_t xRes = 50;
+	double yMin = -70.0;
+	double yMax = 50.0;
+	uint16_t yRes = 50;
+	double z = 1.5;
 
     /*
     * Ensure that the frequency band is in the mmWave range 
