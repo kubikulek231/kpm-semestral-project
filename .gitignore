@@ -2,6 +2,7 @@
 /*
 !.gitignore
 !kpm-project-11.cc
+!export/
 nested-subdir/
 subdir/
 scratch-simulator.cc
