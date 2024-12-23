@@ -6,6 +6,8 @@
 !export/
 !project-data/
 !sim-params
+!MPA_KPM_project__presentation_.pdf
+!MPA_KPM_project__written_document_.pdf
 nested-subdir/
 subdir/
 scratch-simulator.cc
